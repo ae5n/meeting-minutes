@@ -1,13 +1,18 @@
 import streamlit as st
 import modal
+from docx import Document
 
 def main():
     st.title("Meeting Minutes Generator")
 
-    # Upload the .vtt file for the transcript
-    uploaded_file = st.file_uploader("Choose a .vtt file for the transcript", type="vtt")
+    # Upload the .vtt, .txt, or .docx file for the transcript
+    uploaded_file = st.file_uploader("Choose a .vtt, .txt, or .docx file for the transcript", type=["vtt", "txt", "docx"])
     if uploaded_file:
-        transcript = uploaded_file.read().decode()
+        if uploaded_file.type in ["text/vtt", "text/plain"]:
+            transcript = uploaded_file.read().decode()
+        else:
+            doc = Document(uploaded_file)
+            transcript = "\n".join([p.text for p in doc.paragraphs if p.text.strip() != ""])
     else:
         transcript = ""
 
@@ -16,7 +21,7 @@ def main():
 
     if st.button("Generate Meeting Minutes"):
         if not transcript:
-            st.error("Please upload a .vtt file for the transcript before generating the minutes.")
+            st.error("Please upload a .vtt, .txt, or .docx file for the transcript before generating the minutes.")
             return
 
         if meeting_agenda:
