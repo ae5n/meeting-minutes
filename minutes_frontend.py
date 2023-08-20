@@ -17,7 +17,8 @@ def main():
         transcript = ""
 
     # Optional field for the meeting agenda
-    meeting_agenda = st.text_area("Meeting Agenda (optional)")
+    meeting_agenda = st.text_area("Meeting Agenda (optional): Enter each agenda item on a new line.")
+
 
     if st.button("Generate Meeting Minutes"):
         if not transcript:
