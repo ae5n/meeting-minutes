@@ -24,61 +24,39 @@ def main():
             st.error("Please upload a .vtt, .txt, or .docx file for the transcript before generating the minutes.")
             return
 
+        # Base prompt structure
+        basePrompt = """
+        Given the provided meeting transcript, generate meeting minutes that are informative, capturing essential details, key points, decisions, and action items. Ensure the minutes:
+
+        - Exclude attendees' names.
+        - Do not have a separate section for Action Items.
+        - Consider any schedule or time associated with each action item or decision.
+        - Assign the person or company responsible for each action or decision, if mentioned in the transcript.
+        - Exclude the date and time mentioned at the beginning of the transcript.
+
+        ---
+
+        Note: The minutes should be clear, and organized.
+        """
+
+        # If there's an agenda, prepend the specific instructions related to the agenda
         if meeting_agenda:
-            instructPrompt = f"""
-            Given the provided meeting agenda and transcript, generate concise and organized meeting minutes that capture key points, decisions, and action items. Ensure the minutes:
+            agendaPrompt = f"""
+        Given the provided meeting agenda and transcript, ensure the minutes:
 
-            - Are structured based on the meeting agenda.
-            - Exclude attendees' names.
-            - Integrate highlights, decisions, or action items directly under the relevant agenda points.
-            - Do not have a separate section for Action Items.
-            - Consider any schedule or time associated with each action item or decision.
-            - Assign the person responsible for each action or decision, if mentioned in the transcript.
-            - Exclude the date and time mentioned at the beginning of the transcript.
+        - Are structured based on the meeting agenda.
+        - Integrate highlights, decisions, or action items directly under the relevant agenda points.
 
-            Agenda:
-            {meeting_agenda}
+        Agenda:
+        {meeting_agenda}
 
-            ---
+        ---
 
-            Note: The minutes should be clear, concise, and organized.
-            """
+        """
+            instructPrompt = agendaPrompt + basePrompt
         else:
-            instructPrompt = f"""
-            Given the provided meeting transcript, generate concise and organized meeting minutes that capture key points, decisions, and action items. Ensure the minutes:
+            instructPrompt = basePrompt
 
-            - Exclude attendees' names.
-            - Do not have a separate section for Action Items.
-            - Consider any schedule or time associated with each action item or decision.
-            - Assign the person responsible for each action or decision, if mentioned in the transcript.
-            - Exclude the date and time mentioned at the beginning of the transcript.
-
-            ---
-
-            Note: The minutes should be clear, concise, and organized.
-            """
-
-        # if meeting_agenda:
-        #     instructPrompt = f"""
-        #     Given the provided meeting agenda and transcript, generate concise and organized meeting minutes that capture key points, decisions, and action items:
-
-        #     Agenda:
-        #     {meeting_agenda}
-
-        #     ---
-
-        #     Note: Ensure the minutes are structured based on the meeting agenda and highlight any important decisions or action items.
-        #     """
-        # else:
-        #     instructPrompt = f"""
-        #     Given the provided meeting transcript, generate concise and organized meeting minutes that capture key points, decisions, and action items:
-
-        #     ---
-
-        #     Note: Highlight any important decisions or action items.
-        #     """
-
-        # Construct the request
         request = instructPrompt + "\n\nTranscript:\n" + transcript
 
         # Call the Modal function to generate the minutes
