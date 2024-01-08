@@ -62,7 +62,7 @@ def main():
 
         # Call the Modal function to generate the minutes
         f = modal.Function.lookup("minutes-project", "generate_minutes")
-        minutes = f.call(request)
+        minutes = f.remote(request)
         st.subheader("Generated Meeting Minutes:")
         st.write(minutes)
 
